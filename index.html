@@ -20,6 +20,40 @@
     <h1>Contacts</h1>
     <a href='https://github.com/zwei-zk'> GitHub </a><br>
     <a href='https://www.linkedin.com/in/jl0109/'> LinkedIn </a><br>
+    
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <script type="importmap">
+        {
+            "imports": {
+              "three": "https://unpkg.com/three@0.141.0/build/three.module.js",
+              "GLTFLoader" : "https://unpkg.com/three@0.141.0/examples/jsm/loaders/GLTFLoader.js"
+            }
+          }
+    </script>
+    <script type="module">
+        import {GLTFLoader} from 'GLTFLoader';
+        import * as THREE from 'three';
+        let renderer = new THREE.WebGLRenderer({
+            canvas : document.querySelector('#canvas'),
+            antialias : true
+        });
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        let scene = new THREE.Scene();
+        let camera = new THREE.PerspectiveCamera(30, 1);
+        camera.position.set(0,0,6);
+        scene.background = new THREE.Color('white');
+        let loader = new GLTFLoader();
+        loader.load('shiba/scene.gltf', function(gltf){
+            scene.add(gltf.scene);
+            function spin(){
+                requestAnimationFrame(spin);
+                gltf.scene.rotation.y += 0.05;
+                gltf.scene.rotation.x += 0.005;
+                renderer.render(scene, camera);
+            }
+            spin()
+        });
+    </script>
 </body>
 
 </html>
