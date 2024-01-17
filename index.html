@@ -43,16 +43,21 @@
         camera.position.set(0,0,6);
         scene.background = new THREE.Color('white');
         let loader = new GLTFLoader();
-        loader.load('shiba/scene.gltf', function(gltf){
-            scene.add(gltf.scene);
-            function spin(){
-                requestAnimationFrame(spin);
-                gltf.scene.rotation.y += 0.05;
-                gltf.scene.rotation.x += 0.005;
-                renderer.render(scene, camera);
-            }
-            spin()
-        });
+        function init(){
+            loader.load('shiba/scene.gltf', function(gltf){
+                scene.add(gltf.scene);
+                function spin(){
+                    requestAnimationFrame(spin);
+                    gltf.scene.rotation.y += 0.05;
+                    gltf.scene.rotation.x += 0.005;
+                    renderer.render(scene, camera);
+                }
+                spin()
+            });
+        }
+        window.onload = function(){
+            init();
+        }
     </script>
 </body>
 
