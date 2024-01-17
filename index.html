@@ -11,6 +11,18 @@
         #canvas {
             display: none; /* Hide canvas initially */
         }
+        body {
+            background-color: #393c41;
+        }
+        h1 {
+            color: white;
+        }
+        p1 {
+            color: white;
+        }
+        a {
+            color: white;
+        }
     </style>
 </head>
 
@@ -48,7 +60,7 @@
         let scene = new THREE.Scene();
         let camera = new THREE.PerspectiveCamera(30, 1);
         camera.position.set(0, 0, 6);
-        scene.background = new THREE.Color('white');
+        scene.background = new THREE.Color('#393c41');
         let loader = new GLTFLoader();
 
         // Display loading indicator
