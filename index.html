@@ -9,6 +9,7 @@
     <title>Why are you here?</title>
     <style>
         #canvas {
+            background-color: '#393c41';
             display: none; /* Hide canvas initially */
         }
         body {
@@ -66,6 +67,7 @@
         // Display loading indicator
         const loadingIndicator = document.createElement('div');
         loadingIndicator.textContent = 'Loading...';
+        loadingIndicator.style.color = 'white';
         document.body.appendChild(loadingIndicator);
 
         function init() {
