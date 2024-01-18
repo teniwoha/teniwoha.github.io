@@ -88,62 +88,85 @@
 
         function init() {
             loader.load('shiba/scene.gltf', function (gltf) {
-                scene.add(gltf.scene);
+            scene.add(gltf.scene);
 
-                // Hide loading indicator and display canvas once the model is loaded
-                loadingIndicator.style.display = 'none';
-                document.getElementById('canvas').style.display = 'block';
+            // Hide loading indicator and display canvas once the model is loaded
+            loadingIndicator.style.display = 'none';
+            document.getElementById('canvas').style.display = 'block';
 
-                function spin() {
-                    requestAnimationFrame(spin);
-                    if (!isDragging) {
-                        gltf.scene.rotation.y += rotationSpeedY;
-                        gltf.scene.rotation.x += rotationSpeedX;
-                    }
+            let isDragging = false;
+            let previousX, previousY;
+
+            function handleMouseDown(event) {
+                isDragging = true;
+                previousX = event.clientX;
+                previousY = event.clientY;
+            }
+
+            function handleMouseMove(event) {
+                if (!isDragging) return;
+
+                const deltaX = event.clientX - previousX;
+                const deltaY = event.clientY - previousY;
+
+                gltf.scene.rotation.y += deltaX * 0.01;
+                gltf.scene.rotation.x += deltaY * 0.01;
+
+                previousX = event.clientX;
+                previousY = event.clientY;
+                renderer.render(scene, camera);
+            }
+
+            function handleMouseUp() {
+                isDragging = false;
+            }
+
+            function handleTouchStart(event) {
+                if (event.touches.length === 1) {
+                    isDragging = true;
+                    previousX = event.touches[0].clientX;
+                    previousY = event.touches[0].clientY;
+                }
+            }
+
+            function handleTouchMove(event) {
+                if (!isDragging || event.touches.length !== 1) return;
+
+                const deltaX = event.touches[0].clientX - previousX;
+                const deltaY = event.touches[0].clientY - previousY;
+
+                gltf.scene.rotation.y += deltaX * 0.01;
+                gltf.scene.rotation.x += deltaY * 0.01;
+
+                previousX = event.touches[0].clientX;
+                previousY = event.touches[0].clientY;
+                renderer.render(scene, camera);
+            }
+
+            function handleTouchEnd() {
+                isDragging = false;
+            }
+
+            // Add event listeners for both mouse and touch events
+            document.addEventListener('mousedown', handleMouseDown);
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            document.addEventListener('touchstart', handleTouchStart);
+            document.addEventListener('touchmove', handleTouchMove);
+            document.addEventListener('touchend', handleTouchEnd);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (!isDragging) {
+                    gltf.scene.rotation.y += 0.005;
+                    gltf.scene.rotation.x += 0.0005;
                     renderer.render(scene, camera);
                 }
-
-                spin();
-
-                // Event listeners for mouse drag on the entire document
-                document.addEventListener('mousedown', (event) => {
-                    if (event.target === document.getElementById('canvas')) {
-                        isDragging = true;
-                        dragStartX = event.clientX;
-                        dragStartY = event.clientY;
-                        lastDragDeltaX = 0;
-                        lastDragDeltaY = 0;
-                        dragStartTime = performance.now();
-                    }
-                });
-
-                document.addEventListener('mousemove', (event) => {
-                    if (isDragging) {
-                        const dragDeltaX = event.clientX - dragStartX;
-                        const dragDeltaY = event.clientY - dragStartY;
-                        gltf.scene.rotation.y += dragDeltaX * 0.01;
-                        gltf.scene.rotation.x += dragDeltaY * 0.01;
-                        lastDragDeltaX = dragDeltaX;
-                        lastDragDeltaY = dragDeltaY;
-                        dragStartX = event.clientX;
-                        dragStartY = event.clientY;
-                        renderer.render(scene, camera);
-                    }
-                });
-
-                document.addEventListener('mouseup', () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        // When released, gradually return to spinning with the last drag direction
-                        const dragEndTime = performance.now();
-                        const dragDuration = dragEndTime - dragStartTime;
-                        rotationSpeedX = (lastDragDeltaY / dragDuration) * 0.1; // Adjusted scaling factor for drag speed
-                        rotationSpeedY = (lastDragDeltaX / dragDuration) * 0.1; // Adjusted scaling factor for drag speed
-                    }
-                });
+            }
+                animate();
             });
         }
-
         window.onload = function () {
             init();
         }
